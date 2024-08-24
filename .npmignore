@@ -1,0 +1,41 @@
+# ソースファイル（コンパイル済みファイルを配布する場合）
+/src
+
+# テストファイル
+/test
+/__tests__
+*.spec.js
+*.test.js
+
+# 設定ファイル
+tsconfig.json
+.eslintrc
+.prettierrc
+jest.config.js
+
+# Git関連
+.git
+.gitignore
+
+# CI/CD
+.travis.yml
+.gitlab-ci.yml
+.github
+
+# エディタ設定
+.vscode
+.idea
+
+# ドキュメント（必要に応じて）
+/docs
+
+# 開発用スクリプト
+/scripts
+
+# その他の開発用ファイル
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store
+Thumbs.db
