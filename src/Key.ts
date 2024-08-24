@@ -2,29 +2,62 @@ import { PitchClass } from './PitchClass';
 import { Interval } from './Interval';
 import { Chord, ChordQuality } from './Chord';
 
+/**
+ * Represents a musical key.
+ * A key is a group of pitches, or scale upon which a music composition is created in classical, Western art, and Western pop music.
+ */
 export abstract class Key {
   protected scale: PitchClass[];
 
+  /**
+   * Creates a new Key instance.
+   * @param tonic The tonic (root note) of the key.
+   */
   constructor(protected tonic: PitchClass) {
     this.scale = this.generateScale();
   }
 
+  /**
+   * Gets the intervals that define the scale for this key.
+   * @returns An array of Intervals that define the scale.
+   */
   abstract getScaleIntervals(): Interval[];
 
+  /**
+   * Generates the scale for this key.
+   * @returns An array of PitchClass instances representing the scale.
+   */
   protected generateScale(): PitchClass[] {
     return [this.tonic, ...this.getScaleIntervals().map(interval => interval.apply(this.tonic))];
   }
 
+  /**
+   * Gets the scale of the key.
+   * @returns An array of PitchClass instances representing the scale.
+   */
   getScale(): PitchClass[] {
     return this.scale;
   }
 
+  /**
+   * Gets the chord for a specific scale degree.
+   * @param degree The scale degree (1-7).
+   * @returns A Chord instance for the specified scale degree.
+   */
   abstract getDegreeChord(degree: number): Chord;
 
+  /**
+   * Gets the tonic of the key.
+   * @returns The PitchClass representing the tonic of the key.
+   */
   getTonic(): PitchClass {
     return this.tonic;
   }
 
+  /**
+   * Gets the key signature for this key.
+   * @returns A string representing the key signature (e.g., "b" for one flat, "###" for three sharps).
+   */
   getKeySignature(): string {
     // この実装は簡略化されています。実際には、調号の計算はもっと複雑になります。
     const sharpKeys = ['C', 'G', 'D', 'A', 'E', 'B', 'F#'];
@@ -40,7 +73,14 @@ export abstract class Key {
   }
 }
 
+/**
+ * Represents a major key in music.
+ */
 export class MajorKey extends Key {
+  /**
+   * Gets the intervals that define the major scale.
+   * @returns An array of Intervals that define the major scale.
+   */
   getScaleIntervals(): Interval[] {
     return [
       Interval.MAJOR_SECOND,
@@ -52,6 +92,12 @@ export class MajorKey extends Key {
     ];
   }
 
+  /**
+   * Gets the chord for a specific scale degree in the major key.
+   * @param degree The scale degree (1-7).
+   * @returns A Chord instance for the specified scale degree.
+   * @throws {Error} If an invalid scale degree is provided.
+   */
   getDegreeChord(degree: number): Chord {
     const chordRoot = this.scale[(degree - 1) % 7];
     switch (degree) {
@@ -71,7 +117,14 @@ export class MajorKey extends Key {
   }
 }
 
+/**
+ * Represents a minor key in music.
+ */
 export class MinorKey extends Key {
+  /**
+   * Gets the intervals that define the natural minor scale.
+   * @returns An array of Intervals that define the natural minor scale.
+   */
   getScaleIntervals(): Interval[] {
     return [
       Interval.MAJOR_SECOND,
@@ -83,6 +136,12 @@ export class MinorKey extends Key {
     ];
   }
 
+  /**
+   * Gets the chord for a specific scale degree in the minor key.
+   * @param degree The scale degree (1-7).
+   * @returns A Chord instance for the specified scale degree.
+   * @throws {Error} If an invalid scale degree is provided.
+   */
   getDegreeChord(degree: number): Chord {
     const chordRoot = this.scale[(degree - 1) % 7];
     switch (degree) {
@@ -101,9 +160,13 @@ export class MinorKey extends Key {
     }
   }
 
+  /**
+   * Gets the key signature for this minor key.
+   * @returns A string representing the key signature.
+   */
   getKeySignature(): string {
     // マイナーキーの調号は、その平行長調の調号と同じです
-    const relativeMinor = new MajorKey(new PitchClass(this.tonic.getName()).transpose(Interval.MINOR_THIRD));
-    return relativeMinor.getKeySignature();
+    const relativeMajor = new MajorKey(this.tonic.transpose(Interval.MINOR_THIRD));
+    return relativeMajor.getKeySignature();
   }
 }
