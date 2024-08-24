@@ -9,9 +9,9 @@ describe('PitchClass', () => {
     });
 
     it('無効な音名でエラーをスローする', () => {
-      expect(() => new PitchClass('H')).toThrow('無効な音名です');
-      expect(() => new PitchClass('C##')).toThrow('無効な音名です');
-      expect(() => new PitchClass('Fb')).toThrow('無効な音名です');
+      expect(() => new PitchClass('H')).toThrow("Invalid pitch name. Use C, C#, Db, D, D#, Eb, E, F, F#, Gb, G, G#, Ab, A, A#, Bb, or B.");
+      expect(() => new PitchClass('C##')).toThrow("Invalid pitch name. Use C, C#, Db, D, D#, Eb, E, F, F#, Gb, G, G#, Ab, A, A#, Bb, or B.");
+      expect(() => new PitchClass('Fb')).toThrow("Invalid pitch name. Use C, C#, Db, D, D#, Eb, E, F, F#, Gb, G, G#, Ab, A, A#, Bb, or B.");
     });
   });
 
