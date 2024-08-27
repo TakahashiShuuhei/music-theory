@@ -80,6 +80,8 @@ export class Chord {
         return [Interval.MAJOR_THIRD, Interval.PERFECT_FIFTH, Interval.MAJOR_SEVENTH];
       case ChordQuality.Minor7th:
         return [Interval.MINOR_THIRD, Interval.PERFECT_FIFTH, Interval.MINOR_SEVENTH];
+      case ChordQuality.HalfDiminished7th:
+        return [Interval.MINOR_THIRD, Interval.TRITONE, Interval.MINOR_SEVENTH];
       case ChordQuality.Diminished7th:
         return [Interval.MINOR_THIRD, Interval.TRITONE, Interval.MAJOR_SIXTH];
       default:
@@ -109,6 +111,8 @@ export class Chord {
         return 'maj7';
       case ChordQuality.Minor7th:
         return 'm7';
+      case ChordQuality.HalfDiminished7th:
+        return 'm7b5';
       case ChordQuality.Diminished7th:
         return 'dim7';
       default:
@@ -128,5 +132,6 @@ export enum ChordQuality {
   Dominant7th,
   Major7th,
   Minor7th,
+  HalfDiminished7th,
   Diminished7th,
 }

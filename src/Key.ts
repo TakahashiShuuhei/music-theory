@@ -37,7 +37,7 @@ export abstract class Key {
    * @param degree The scale degree (1-7).
    * @returns A Chord instance for the specified scale degree.
    */
-  abstract getDegreeChord(degree: number): Chord;
+  abstract getDegreeChord(degree: number, seventh: boolean): Chord;
 
   /**
    * Gets the tonic of the key.
@@ -64,6 +64,31 @@ export abstract class Key {
     }
     return '';
   }
+
+  /**
+   * Gets all diatonic chords in the key.
+   * @returns An array of Chord instances representing the diatonic chords.
+   */
+  getDiatonicChords(seventh: boolean = false): Chord[] {
+    return [1, 2, 3, 4, 5, 6, 7].map(degree => this.getDegreeChord(degree, seventh));
+  }
+
+  /**
+   * Checks if a given chord is diatonic to the key.
+   * @param chord The chord to check.
+   * @returns True if the chord is diatonic to the key, false otherwise.
+   */
+  isDiatonicChord(chord: Chord): boolean {
+    return this.getDiatonicChords(chord.getQuality() === ChordQuality.Dominant7th ||
+                                  chord.getQuality() === ChordQuality.Major7th ||
+                                  chord.getQuality() === ChordQuality.Minor7th ||
+                                  chord.getQuality() === ChordQuality.HalfDiminished7th ||
+                                  chord.getQuality() === ChordQuality.Diminished7th)
+      .some(diatonicChord => 
+        diatonicChord.getRoot().equals(chord.getRoot()) && 
+        diatonicChord.getQuality() === chord.getQuality()
+      );
+  }
 }
 
 /**
@@ -80,22 +105,40 @@ export class MajorKey extends Key {
    * @returns A Chord instance for the specified scale degree.
    * @throws {Error} If an invalid scale degree is provided.
    */
-  getDegreeChord(degree: number): Chord {
+  getDegreeChord(degree: number, seventh: boolean = false): Chord {
     const scalePitchClasses = this.scale.getPitchClasses();
     const chordRoot = scalePitchClasses[(degree - 1) % 7];
-    switch (degree) {
-      case 1:
-      case 4:
-      case 5:
-        return new Chord(chordRoot, ChordQuality.Major);
-      case 2:
-      case 3:
-      case 6:
-        return new Chord(chordRoot, ChordQuality.Minor);
-      case 7:
-        return new Chord(chordRoot, ChordQuality.Diminished);
-      default:
-        throw new Error('Invalid scale degree');
+    if (seventh) {
+      switch (degree) {
+        case 1:
+        case 4:
+          return new Chord(chordRoot, ChordQuality.Major7th);
+        case 2:
+        case 3:
+        case 6:
+          return new Chord(chordRoot, ChordQuality.Minor7th);
+        case 5:
+          return new Chord(chordRoot, ChordQuality.Dominant7th);
+        case 7:
+          return new Chord(chordRoot, ChordQuality.HalfDiminished7th);
+        default:
+          throw new Error('Invalid scale degree');
+      }
+    } else {
+      switch (degree) {
+        case 1:
+        case 4:
+        case 5:
+          return new Chord(chordRoot, ChordQuality.Major);
+        case 2:
+        case 3:
+        case 6:
+          return new Chord(chordRoot, ChordQuality.Minor);
+        case 7:
+          return new Chord(chordRoot, ChordQuality.Diminished);
+        default:
+          throw new Error('Invalid scale degree');
+      }
     }
   }
 }
@@ -114,22 +157,40 @@ export class MinorKey extends Key {
    * @returns A Chord instance for the specified scale degree.
    * @throws {Error} If an invalid scale degree is provided.
    */
-  getDegreeChord(degree: number): Chord {
+  getDegreeChord(degree: number, seventh: boolean = false): Chord {
     const scalePitchClasses = this.scale.getPitchClasses();
     const chordRoot = scalePitchClasses[(degree - 1) % 7];
-    switch (degree) {
-      case 1:
-      case 4:
-      case 5:
-        return new Chord(chordRoot, ChordQuality.Minor);
-      case 3:
-      case 6:
-      case 7:
-        return new Chord(chordRoot, ChordQuality.Major);
-      case 2:
-        return new Chord(chordRoot, ChordQuality.Diminished);
-      default:
-        throw new Error('Invalid scale degree');
+    if (seventh) {
+      switch (degree) {
+        case 1:
+        case 4:
+        case 5:
+          return new Chord(chordRoot, ChordQuality.Minor7th);
+        case 2:
+          return new Chord(chordRoot, ChordQuality.HalfDiminished7th);
+        case 3:
+        case 6:
+          return new Chord(chordRoot, ChordQuality.Major7th);
+        case 7:
+          return new Chord(chordRoot, ChordQuality.Dominant7th);
+        default:
+          throw new Error('Invalid scale degree');
+      }
+    } else {
+      switch (degree) {
+        case 1:
+        case 4:
+        case 5:
+          return new Chord(chordRoot, ChordQuality.Minor);
+        case 3:
+        case 6:
+        case 7:
+          return new Chord(chordRoot, ChordQuality.Major);
+        case 2:
+          return new Chord(chordRoot, ChordQuality.Diminished);
+        default:
+          throw new Error('Invalid scale degree');
+      }
     }
   }
 
