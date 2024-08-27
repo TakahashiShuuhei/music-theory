@@ -1,8 +1,10 @@
 {
     "entryPoints": ["src/index.ts"],
     "out": "docs",
+    "plugin": ["typedoc-plugin-markdown"],
+    "readme": "none",
     "name": "Music Theory Library",
     "excludePrivate": true,
     "excludeProtected": true,
     "excludeExternals": true
-  }
+}
