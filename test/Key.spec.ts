@@ -1,14 +1,17 @@
 import { PitchClass } from '../src/PitchClass';
 import { MajorKey, MinorKey } from '../src/Key';
 import { ChordQuality } from '../src/Chord';
+import { MajorScale, NaturalMinorScale } from '../src/Scale';
 
 describe('Key', () => {
   describe('MajorKey', () => {
     const cMajor = new MajorKey(new PitchClass('C'));
 
-    it('generates correct scale', () => {
-      const scale = cMajor.getScale().map(pc => pc.getName());
-      expect(scale).toEqual(['C', 'D', 'E', 'F', 'G', 'A', 'B']);
+    it('creates correct scale', () => {
+      const scale = cMajor.getScale();
+      expect(scale).toBeInstanceOf(MajorScale);
+      const pitchClasses = scale.getPitchClasses().map(pc => pc.getName());
+      expect(pitchClasses).toEqual(['C', 'D', 'E', 'F', 'G', 'A', 'B']);
     });
 
     it('returns correct chords for each degree', () => {
@@ -31,9 +34,11 @@ describe('Key', () => {
   describe('MinorKey', () => {
     const aMinor = new MinorKey(new PitchClass('A'));
 
-    it('generates correct scale', () => {
-      const scale = aMinor.getScale().map(pc => pc.getName());
-      expect(scale).toEqual(['A', 'B', 'C', 'D', 'E', 'F', 'G']);
+    it('creates correct scale', () => {
+      const scale = aMinor.getScale();
+      expect(scale).toBeInstanceOf(NaturalMinorScale);
+      const pitchClasses = scale.getPitchClasses().map(pc => pc.getName());
+      expect(pitchClasses).toEqual(['A', 'B', 'C', 'D', 'E', 'F', 'G']);
     });
 
     it('returns correct chords for each degree', () => {
@@ -50,6 +55,20 @@ describe('Key', () => {
       expect(aMinor.getKeySignature()).toBe('');
       expect(new MinorKey(new PitchClass('E')).getKeySignature()).toBe('#');
       expect(new MinorKey(new PitchClass('D')).getKeySignature()).toBe('b');
+    });
+  });
+
+  describe('Key and Scale integration', () => {
+    it('MajorKey uses MajorScale', () => {
+      const dMajor = new MajorKey(new PitchClass('D'));
+      expect(dMajor.getScale()).toBeInstanceOf(MajorScale);
+      expect(dMajor.getScale().getTonic().getName()).toBe('D');
+    });
+
+    it('MinorKey uses NaturalMinorScale', () => {
+      const bMinor = new MinorKey(new PitchClass('B'));
+      expect(bMinor.getScale()).toBeInstanceOf(NaturalMinorScale);
+      expect(bMinor.getScale().getTonic().getName()).toBe('B');
     });
   });
 });

@@ -1,41 +1,34 @@
 import { PitchClass } from './PitchClass';
 import { Interval } from './Interval';
 import { Chord, ChordQuality } from './Chord';
+import { Scale, MajorScale, NaturalMinorScale } from './Scale';
 
 /**
  * Represents a musical key.
  * A key is a group of pitches, or scale upon which a music composition is created in classical, Western art, and Western pop music.
  */
 export abstract class Key {
-  protected scale: PitchClass[];
+  protected scale: Scale;
 
   /**
    * Creates a new Key instance.
    * @param tonic The tonic (root note) of the key.
    */
   constructor(protected tonic: PitchClass) {
-    this.scale = this.generateScale();
+    this.scale = this.createScale();
   }
 
   /**
-   * Gets the intervals that define the scale for this key.
-   * @returns An array of Intervals that define the scale.
+   * Creates the scale for this key.
+   * @returns A Scale instance representing the scale of this key.
    */
-  abstract getScaleIntervals(): Interval[];
-
-  /**
-   * Generates the scale for this key.
-   * @returns An array of PitchClass instances representing the scale.
-   */
-  protected generateScale(): PitchClass[] {
-    return [this.tonic, ...this.getScaleIntervals().map(interval => interval.apply(this.tonic))];
-  }
+  protected abstract createScale(): Scale;
 
   /**
    * Gets the scale of the key.
-   * @returns An array of PitchClass instances representing the scale.
+   * @returns The Scale instance representing the scale of this key.
    */
-  getScale(): PitchClass[] {
+  getScale(): Scale {
     return this.scale;
   }
 
@@ -77,19 +70,8 @@ export abstract class Key {
  * Represents a major key in music.
  */
 export class MajorKey extends Key {
-  /**
-   * Gets the intervals that define the major scale.
-   * @returns An array of Intervals that define the major scale.
-   */
-  getScaleIntervals(): Interval[] {
-    return [
-      Interval.MAJOR_SECOND,
-      Interval.MAJOR_THIRD,
-      Interval.PERFECT_FOURTH,
-      Interval.PERFECT_FIFTH,
-      Interval.MAJOR_SIXTH,
-      Interval.MAJOR_SEVENTH
-    ];
+  protected createScale(): Scale {
+    return new MajorScale(this.tonic);
   }
 
   /**
@@ -99,7 +81,8 @@ export class MajorKey extends Key {
    * @throws {Error} If an invalid scale degree is provided.
    */
   getDegreeChord(degree: number): Chord {
-    const chordRoot = this.scale[(degree - 1) % 7];
+    const scalePitchClasses = this.scale.getPitchClasses();
+    const chordRoot = scalePitchClasses[(degree - 1) % 7];
     switch (degree) {
       case 1:
       case 4:
@@ -121,19 +104,8 @@ export class MajorKey extends Key {
  * Represents a minor key in music.
  */
 export class MinorKey extends Key {
-  /**
-   * Gets the intervals that define the natural minor scale.
-   * @returns An array of Intervals that define the natural minor scale.
-   */
-  getScaleIntervals(): Interval[] {
-    return [
-      Interval.MAJOR_SECOND,
-      Interval.MINOR_THIRD,
-      Interval.PERFECT_FOURTH,
-      Interval.PERFECT_FIFTH,
-      Interval.MINOR_SIXTH,
-      Interval.MINOR_SEVENTH
-    ];
+  protected createScale(): Scale {
+    return new NaturalMinorScale(this.tonic);
   }
 
   /**
@@ -143,7 +115,8 @@ export class MinorKey extends Key {
    * @throws {Error} If an invalid scale degree is provided.
    */
   getDegreeChord(degree: number): Chord {
-    const chordRoot = this.scale[(degree - 1) % 7];
+    const scalePitchClasses = this.scale.getPitchClasses();
+    const chordRoot = scalePitchClasses[(degree - 1) % 7];
     switch (degree) {
       case 1:
       case 4:
